@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "544863404274",
+    "project_id": "fir-appsala",
+    "storage_bucket": "fir-appsala.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:544863404274:android:4a787eaba3e92295fe906b",
+        "android_client_info": {
+          "package_name": "com.clemilton.firebaseappsala"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "544863404274-470h23k0vhrjp0reh19qe95tjqodtdtr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.clemilton.firebaseappsala",
+            "certificate_hash": "00a573118e5306335c35fb199669ec08f71ba290"
+          }
+        },
+        {
+          "client_id": "544863404274-p5mblk1d9ukc991hbvqi2j9bsf2e1313.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-j_gCBfohVT-sr3Jce14uLhaq0Jo7aYo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "544863404274-p5mblk1d9ukc991hbvqi2j9bsf2e1313.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
