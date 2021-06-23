@@ -3,14 +3,19 @@ package com.clemilton.firebaseappsala;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.clemilton.firebaseappsala.adapter.ImageAdapter;
 import com.clemilton.firebaseappsala.model.Upload;
+import com.clemilton.firebaseappsala.util.LoadingDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -18,6 +23,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
@@ -29,12 +35,39 @@ public class MainActivity extends AppCompatActivity {
                                             .getReference("uploads");
 
     private ArrayList<Upload> listaUploads = new ArrayList<>();
+
+    private RecyclerView recyclerView;
+    private ImageAdapter imageAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         btnLogout = findViewById(R.id.main_btn_logout);
         btnStorage = findViewById(R.id.main_btn_storage);
+        recyclerView = findViewById(R.id.main_recycler);
+
+        imageAdapter = new ImageAdapter(getApplicationContext(),listaUploads);
+        imageAdapter.setListener(new ImageAdapter.OnItemClickListener() {
+            @Override
+            public void onDeleteClick(int position) {
+                Upload upload = listaUploads.get(position);
+                deleteUpload(upload);
+            }
+
+            @Override
+            public void onUpdateClick(int position) {
+
+            }
+        });
+        recyclerView.setLayoutManager(
+            new LinearLayoutManager(getApplicationContext())
+        );
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setAdapter(imageAdapter);
+
+
 
         btnStorage.setOnClickListener(v -> {
             //abrir StorageActivity
@@ -67,12 +100,35 @@ public class MainActivity extends AppCompatActivity {
         getData();
     }
 
+    public void deleteUpload(Upload upload){
+        LoadingDialog dialog = new LoadingDialog(this,
+                                                R.layout.custom_dialog);
+        dialog.startLoadingDialog();
+
+        //deletar img no storage
+        StorageReference imagemRef = FirebaseStorage
+                                            .getInstance()
+                                            .getReferenceFromUrl(upload.getUrl());
+
+        imagemRef.delete()
+        .addOnSuccessListener(aVoid -> {
+            // deletar img no database
+            database.child(upload.getId()).removeValue()
+            .addOnSuccessListener(aVoid1 -> {
+                Toast.makeText(getApplicationContext(),
+                        "Item deletado!", Toast.LENGTH_SHORT).show();
+                dialog.dismissDialog();
+            });
+        });
+    }
+
     public void getData(){
         //listener p/ o nó uploads
         // - caso ocorra alguma alteracao -> retorna TODOS os dados!!
         database.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                listaUploads.clear();
                for( DataSnapshot no_filho :  snapshot.getChildren()){
                     Upload upload = no_filho.getValue(Upload.class);
                     listaUploads.add(upload);
@@ -80,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
                                     +  upload.getNomeImagem() );
 
                }
+               imageAdapter.notifyDataSetChanged();
             }
 
             @Override
