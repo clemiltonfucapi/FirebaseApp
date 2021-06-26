@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth auth = FirebaseAuth.getInstance();
     private Button btnLogout,btnStorage;
     private DatabaseReference database  = FirebaseDatabase.getInstance()
-                                            .getReference("uploads");
+            .getReference("uploads");
 
     private ArrayList<Upload> listaUploads = new ArrayList<>();
 
@@ -58,11 +58,16 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onUpdateClick(int position) {
-
+                Upload upload = listaUploads.get(position);
+                Intent intent = new Intent(getApplicationContext(),
+                        UpdateActivity.class);
+                //envia o upload para outra Activity
+                intent.putExtra("upload",upload);
+                startActivity(intent);
             }
         });
         recyclerView.setLayoutManager(
-            new LinearLayoutManager(getApplicationContext())
+                new LinearLayoutManager(getApplicationContext())
         );
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(imageAdapter);
@@ -93,33 +98,33 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         // onStart:
         /*    - faz parte do ciclo de vida da Activity, depois do onCreate()
-        *      - É executado quando app inicia,
-        *      - e quando volta do background
-        *  */
+         *      - É executado quando app inicia,
+         *      - e quando volta do background
+         *  */
         super.onStart();
         getData();
     }
 
     public void deleteUpload(Upload upload){
         LoadingDialog dialog = new LoadingDialog(this,
-                                                R.layout.custom_dialog);
+                R.layout.custom_dialog);
         dialog.startLoadingDialog();
 
         //deletar img no storage
         StorageReference imagemRef = FirebaseStorage
-                                            .getInstance()
-                                            .getReferenceFromUrl(upload.getUrl());
+                .getInstance()
+                .getReferenceFromUrl(upload.getUrl());
 
         imagemRef.delete()
-        .addOnSuccessListener(aVoid -> {
-            // deletar img no database
-            database.child(upload.getId()).removeValue()
-            .addOnSuccessListener(aVoid1 -> {
-                Toast.makeText(getApplicationContext(),
-                        "Item deletado!", Toast.LENGTH_SHORT).show();
-                dialog.dismissDialog();
-            });
-        });
+                .addOnSuccessListener(aVoid -> {
+                    // deletar img no database
+                    database.child(upload.getId()).removeValue()
+                            .addOnSuccessListener(aVoid1 -> {
+                                Toast.makeText(getApplicationContext(),
+                                        "Item deletado!", Toast.LENGTH_SHORT).show();
+                                dialog.dismissDialog();
+                            });
+                });
     }
 
     public void getData(){
@@ -129,14 +134,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 listaUploads.clear();
-               for( DataSnapshot no_filho :  snapshot.getChildren()){
+                for( DataSnapshot no_filho :  snapshot.getChildren()){
                     Upload upload = no_filho.getValue(Upload.class);
                     listaUploads.add(upload);
                     Log.i("DATABASE","id: " + upload.getId() + ",nome: "
-                                    +  upload.getNomeImagem() );
+                            +  upload.getNomeImagem() );
 
-               }
-               imageAdapter.notifyDataSetChanged();
+                }
+                imageAdapter.notifyDataSetChanged();
             }
 
             @Override
