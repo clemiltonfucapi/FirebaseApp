@@ -43,6 +43,7 @@ public class StorageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_storage);
+
         btnUpload = findViewById(R.id.storage_btn_upload);
         imageView = findViewById(R.id.storage_image_cel);
         btnGaleria = findViewById(R.id.storage_btn_galeria);
@@ -174,7 +175,5 @@ public class StorageActivity extends AppCompatActivity {
         .addOnFailureListener(e -> {
             e.printStackTrace();
         });
-
-
     }
 }
