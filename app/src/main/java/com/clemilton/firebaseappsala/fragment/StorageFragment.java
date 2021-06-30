@@ -27,6 +27,7 @@ import com.clemilton.firebaseappsala.NavigationActivity;
 import com.clemilton.firebaseappsala.R;
 import com.clemilton.firebaseappsala.model.Upload;
 import com.clemilton.firebaseappsala.util.LoadingDialog;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -50,14 +51,18 @@ public class StorageFragment extends Fragment {
     private DatabaseReference database = FirebaseDatabase.getInstance()
             .getReference("uploads");
 
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
     public StorageFragment() {
         // Required empty public constructor
     }
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        database = FirebaseDatabase
+                        .getInstance()
+                        .getReference("uploads")
+                        .child(auth.getUid());
+
         // Inflate the layout for this fragment
         View layout =  inflater.inflate(R.layout.fragment_storage, container, false);
 
