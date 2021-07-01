@@ -3,6 +3,16 @@ package com.clemilton.firebaseappsala.model;
 public class User {
     private String id,email,nome,photoUrl;
 
+    // armazena se o usuario recebeu solicitacao
+    private boolean receiveRequest;
+
+    public void setReceiveRequest(boolean b) {
+        this.receiveRequest = b;
+    }
+    public boolean getReceiveRequest(){
+        return receiveRequest;
+    }
+
     public User(){
 
     }
@@ -43,5 +53,9 @@ public class User {
 
     public void setPhotoUrl(String photoUrl) {
         this.photoUrl = photoUrl;
+    }
+
+    public boolean equals(User u){
+        return this.id.equals(u.getId());
     }
 }
