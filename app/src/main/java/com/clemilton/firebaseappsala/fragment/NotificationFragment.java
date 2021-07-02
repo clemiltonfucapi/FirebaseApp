@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.core.app.NotificationCompat;
@@ -20,6 +21,7 @@ import android.widget.EditText;
 import com.clemilton.firebaseappsala.NavigationActivity;
 import com.clemilton.firebaseappsala.R;
 import com.clemilton.firebaseappsala.UpdateActivity;
+import com.clemilton.firebaseappsala.util.NotificationReceiver;
 
 import static com.clemilton.firebaseappsala.util.App.CHANNEL_1;
 
@@ -49,25 +51,20 @@ public class NotificationFragment extends Fragment {
             String msg = editMsg.getText().toString();
 
             Intent intent = new Intent(getContext(), NavigationActivity.class);
-            /*val pendingIntent = NavDeepLinkBuilder(context)
-                    .setComponentName(YourActivity::class.java)
-                     .setGraph(R.navigation.your_nav_graph)
-                    .setDestination(R.id.your_destination)
-                    .setArguments(bundle)
-                    .createPendingIntent()*/
+            //// https://qastack.com.br/programming/2808796/what-is-an-android-pendingintent
             PendingIntent contentIntent = new NavDeepLinkBuilder(getContext())
                                        .setComponentName(NavigationActivity.class)
                                         .setGraph(R.navigation.nav_graph)
                                         .setDestination(R.id.nav_menu_lista_imagens)
                                         .createPendingIntent();
+            /* intent para executar um BroadcastReceiver*/
+            Intent broadcastIntent = new Intent(getContext(), NotificationReceiver.class);
+            broadcastIntent.putExtra("toast",msg);
 
-            /*
-            PendingIntent contentIntent = PendingIntent.getActivity(
-                                            getContext(),
-                                            0,
-                                            intent,
-                                            0
-            );*/
+            PendingIntent actionIntent = PendingIntent.getBroadcast(
+                    getContext(),0,broadcastIntent,PendingIntent.FLAG_UPDATE_CURRENT
+            );
+
 
             //Criar a notificação
             Notification notification = new NotificationCompat
@@ -77,8 +74,12 @@ public class NotificationFragment extends Fragment {
                                         .setContentText(msg)
                                         .setPriority(Notification.PRIORITY_HIGH)
                                         .setContentIntent(contentIntent)
+                                        .setColor(Color.BLUE)
+                                        .setOnlyAlertOnce(true)
                                         .addAction(R.drawable.ic_account_circle_black_24dp,
                                                 "Toast",actionIntent)
+                                        .addAction(R.drawable.ic_account_circle_black_24dp,
+                                                "Toast2",actionIntent)
                                         .build();
             notificationManager.notify(1,notification);
         });

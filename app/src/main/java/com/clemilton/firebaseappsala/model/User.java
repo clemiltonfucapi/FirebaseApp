@@ -1,17 +1,23 @@
 package com.clemilton.firebaseappsala.model;
 
+import com.google.firebase.database.Exclude;
+
 public class User {
     private String id,email,nome,photoUrl;
 
     // armazena se o usuario recebeu solicitacao
-    private boolean receiveRequest;
+    @Exclude
+    private String typeRequest;
+    public String getTypeRequest() {
+        return typeRequest;
+    }
 
-    public void setReceiveRequest(boolean b) {
-        this.receiveRequest = b;
+    public void setTypeRequest(String typeRequest) {
+        this.typeRequest = typeRequest;
     }
-    public boolean getReceiveRequest(){
-        return receiveRequest;
-    }
+
+
+
 
     public User(){
 
