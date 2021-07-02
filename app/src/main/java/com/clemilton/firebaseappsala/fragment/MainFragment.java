@@ -24,6 +24,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -97,35 +99,29 @@ public class MainFragment extends Fragment {
     }
 
     public void getUsersDatabase(){
-        usersRef.addValueEventListener(new ValueEventListener() {
+        //irá armazenar usuarios que ja foram solicitados
+        Map<String,User> mapUsersReq  = new HashMap<String,User>();
+        requestRef.child(userLogged.getId()).child("send")
+        .addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                listaContatos.clear();
-                for(DataSnapshot filho : snapshot.getChildren()){
-                    User u = filho.getValue(User.class);
-                    // comparar com usuario logado
-                    if(!userLogged.equals(u)){
-                        /*if(cont%2==0){
-                            u.setReceiveRequest(true);
-                        }else{
-                            u.setReceiveRequest(false);
-                        }*/
-                        listaContatos.add(u);
-                    }
-
+                for(DataSnapshot u : snapshot.getChildren()){
+                    User user = u.getValue(User.class);
+                    // adicionando usuario no HashMap
+                    mapUsersReq.put(user.getId(),user);
                 }
-
-                // verificar quais contatos ja foram solicitados
-                requestRef.child(userLogged.getId()).child("send")
-                .addValueEventListener(new ValueEventListener() {
+                //ler o no usuarios
+                usersRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for(DataSnapshot no_filho : snapshot.getChildren()  ){
-                            User usuarioSolicitado = no_filho.getValue(User.class);
-                            for(int i=0; i< listaContatos.size(); i++){
-                                if(listaContatos.get(i).equals(usuarioSolicitado) ){
-                                    listaContatos.get(i).setReceiveRequest(true);
-                                }
+                        listaContatos.clear();
+                        for(DataSnapshot u : snapshot.getChildren()){
+                            User user = u.getValue(User.class);
+                            if(mapUsersReq.containsKey(user.getId())){
+                                user.setReceiveRequest(true);
+                            }
+                            if(!userLogged.equals(user)){
+                                listaContatos.add(user);
                             }
                         }
                         userAdapter.notifyDataSetChanged();
