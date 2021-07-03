@@ -20,6 +20,7 @@ import android.widget.EditText;
 import com.clemilton.firebaseappsala.NavigationActivity;
 import com.clemilton.firebaseappsala.R;
 import com.clemilton.firebaseappsala.UpdateActivity;
+import com.clemilton.firebaseappsala.util.NotificationReceiver;
 
 import static com.clemilton.firebaseappsala.util.App.CHANNEL_1;
 
@@ -68,6 +69,19 @@ public class NotificationFragment extends Fragment {
                                             intent,
                                             0
             );*/
+
+            //Criar um broadcast receiver ->
+            // - Ele deve ser ativado EXPLICITAMENTE!
+            // - não deve durar mais de 10 seg
+            Intent broadcastIntent = new Intent(getContext(),
+                                        NotificationReceiver.class);
+            broadcastIntent.putExtra("toast",msg);
+
+            PendingIntent actionIntent = PendingIntent.getBroadcast(
+                    getContext(),0,broadcastIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT
+            );
+
 
             //Criar a notificação
             Notification notification = new NotificationCompat

@@ -84,6 +84,7 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
             }catch(Exception ex){
                 //excecao genérica
+                Log.e("LOGIN",e.getMessage()+e.getClass());
                 Toast.makeText(this, "Erro!", Toast.LENGTH_SHORT).show();
             }
 
